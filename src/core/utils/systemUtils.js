@@ -2,12 +2,22 @@ const { spawn } = require('child_process');
 
 exports.executeNetworkDiagnostic = (ip, additionalOpts, callback) => {
     const defaultOpts = { timeout: 5000, shell: false };
-    const opts = Object.assign({}, defaultOpts, additionalOpts);
+    const opts = Object.assign({}, defaultOpts, additionalOpts, { shell: false });
     
-    const child = spawn('ping', ['-c', '1', ip || '8.8.8.8'], opts);
-    let out = '';
-    child.stdout.on('data', d => out += d);
-    child.on('close', () => callback(out));
+    try {
+        const child = spawn('ping', ['-c', '1', ip || '8.8.8.8'], opts);
+        let out = '';
+        if (child.stdout) {
+            child.stdout.on('data', d => out += d);
+        }
+        if (child.stderr) {
+            child.stderr.on('data', d => out += d);
+        }
+        child.on('error', err => callback(err ? (err.message || '') : ''));
+        child.on('close', () => callback(out));
+    } catch (err) {
+        callback(err ? (err.message || '') : '');
+    }
 };
 
 exports.allocateMemoryBlock = (size) => {
