@@ -28,7 +28,7 @@ candidates = []
 for position, finding in enumerate(findings):
     # Handle both lowercase (custom json) and uppercase (cm schema) keys
     sev = (finding.get('Severity') or finding.get('severity') or 'LOW').upper()
-    fid = finding.get('FindingID') or finding.get('id') or ''
+    fid = finding.get('finding_id') or finding.get('FindingID') or finding.get('id') or ''
     sev_value = severities.get(sev, 0)
 
     if sev_value > max_sev_value:
