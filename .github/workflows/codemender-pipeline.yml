@@ -79,6 +79,7 @@ jobs:
       - name: Install CodeMender CLI (cm)
         run: |
           set -euo pipefail
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
           sudo ln -sf /bin/bash /bin/sh
           mkdir -p "$RUNNER_TEMP/cmbin"
           install -m 0755 "$CM_BUNDLED" "$RUNNER_TEMP/cmbin/cm"
